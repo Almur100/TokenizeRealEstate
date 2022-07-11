@@ -1,0 +1,3 @@
+[submodule "client/realestatefrontend"]
+	path = client/realestatefrontend
+	url = https://github.com/Almur100/realestatefrontend.git
