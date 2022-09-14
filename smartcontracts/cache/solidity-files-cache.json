@@ -185,8 +185,8 @@
       ]
     },
     "/home/almur/Documents/resume/tokenizerealestate/smartcontracts/contracts/tokenizerealestate.sol": {
-      "lastModificationDate": 1657031449590,
-      "contentHash": "9ce88a7cdb2fd6a1b318ffff5aee71a7",
+      "lastModificationDate": 1660700727593,
+      "contentHash": "1b0aafeebc2142dc0654c251f1252c6f",
       "sourceName": "contracts/tokenizerealestate.sol",
       "solcConfig": {
         "version": "0.8.13",

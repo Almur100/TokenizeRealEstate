@@ -32,11 +32,14 @@ contract tokenizeRealestate is ReentrancyGuard{
          bytes contact;
      }
      struct FractionAsset{
+         string fassetimage;
+         string imagename;
          IERC721 nft;
          uint tokenId;   
          uint assetPrice;
          bytes size;
          uint rentPrice;
+         uint fid;
      }
      struct subscription{
          address subscriber;
@@ -77,16 +80,17 @@ contract tokenizeRealestate is ReentrancyGuard{
 
 
      }
-     function addAsset(IERC721 _nft,uint _tokenId,bytes memory _assetlocation,bytes memory _assetcontact,uint fassetprice,bytes memory fassetsize,uint fassetrentcost ) public nonReentrant {
+     function addAsset(string memory _fassetimage,string memory _imagename,IERC721 _nft,uint _tokenId,bytes memory _assetlocation,bytes memory _assetcontact,uint fassetprice,bytes memory fassetsize,uint fassetrentcost ) public nonReentrant {
          require(exist[msg.sender]== true,"addr not exists");
          assetid += 1;
+        //  _nft.setApprovalForAll(address(this), true);
          _nft.transferFrom(msg.sender, address(this), _tokenId); 
          Fractionassetowner[assetid][1]= msg.sender;
          Tokenizeasset[assetid].push(1);
          sellonof[assetid][1]= false;
          asset memory Asset  = asset(_nft,_assetlocation,assetid,_assetcontact);
          assetDetails[assetid] = Asset;
-         FractionAsset memory Fasset = FractionAsset(_nft,_tokenId,fassetprice,fassetsize,fassetrentcost);
+         FractionAsset memory Fasset = FractionAsset(_fassetimage,_imagename,_nft,_tokenId,fassetprice,fassetsize,fassetrentcost,1);
          FractionAssetdetails[assetid][1]= Fasset;
          subscription memory subs;
          subs.start = block.timestamp;
@@ -97,14 +101,14 @@ contract tokenizeRealestate is ReentrancyGuard{
 
 
      }
-     function addfractionasset(uint price,uint id,uint rentprice,bytes memory size,uint _tokenId) public{
+     function addfractionasset(string memory _fassetimage,string memory _imagename,IERC721 _nft,uint price,uint id,uint rentprice,bytes memory size,uint _tokenId) public{
          require(Fractionassetowner[id][1]== msg.sender,"sender is not owner");
         //  uint length = Tokenizeasset[id].length;
         //  length += 1;
         //  Tokenizeasset[id].push(length);
         //  Fractionassetowner[id][length]= msg.sender;
-         asset memory Asset = assetDetails[id];
-         IERC721 _nft = Asset.nft;
+        //  asset memory Asset = assetDetails[id];
+        //  IERC721 _nft = Asset.nft;
          require(_nft.ownerOf(_tokenId)!= address(this),"nft id already exists");
          _nft.transferFrom(msg.sender, address(this), _tokenId); 
          uint length = Tokenizeasset[id].length;
@@ -112,7 +116,7 @@ contract tokenizeRealestate is ReentrancyGuard{
          Tokenizeasset[id].push(length);
          Fractionassetowner[id][length]= msg.sender;
          
-         FractionAsset memory Fasset = FractionAsset(_nft,_tokenId,price,size,rentprice);
+         FractionAsset memory Fasset = FractionAsset(_fassetimage,_imagename,_nft,_tokenId,price,size,rentprice,length);
          FractionAssetdetails[id][length] = Fasset;
          sellonof[id][length] = false;
          subscription memory subs;
@@ -137,14 +141,14 @@ contract tokenizeRealestate is ReentrancyGuard{
          sellonof[Assetid][fractionassetid]= false;
 
      }
-     function BuyAsset(uint Assetid,uint fractionassetid) public nonReentrant{
+     function BuyAsset(uint Assetid,uint fractionassetid,IERC721 _nft) public nonReentrant{
          require(sellonof[assetid][fractionassetid]== true,"sell  off");
          address owner = Fractionassetowner[Assetid][fractionassetid];
         //   Fractionassetowner[Assetid][fractionassetid]== msg.sender;
         //  require(sellonof[assetid][fractionassetid]== true,"sell  off");
          FractionAsset memory Fasset = FractionAssetdetails[Assetid][fractionassetid];
          uint amount = Fasset.assetPrice;
-         IERC721 _nft = Fasset.nft;
+        //  IERC721 _nft = Fasset.nft;
          uint _tokenId = Fasset.tokenId;
         //  require(sellonof[assetid][fractionassetid]== true,"sell  off");
          token.transferFrom(msg.sender, owner, amount);
@@ -200,6 +204,9 @@ contract tokenizeRealestate is ReentrancyGuard{
     }
     function gettokenizeasset(uint Assetid) public view returns (uint[] memory){
         return Tokenizeasset[Assetid];
+    }
+    function getid() public view returns(uint){
+        return assetid;
     }
 
 
